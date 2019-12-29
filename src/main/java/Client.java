@@ -1,6 +1,8 @@
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-//@AllArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Client {
     private String login;
     private String password;

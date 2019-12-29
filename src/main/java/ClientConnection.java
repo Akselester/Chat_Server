@@ -1,17 +1,17 @@
-import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 @Log
-//@AllArgsConstructor
 public class ClientConnection implements Observer, Runnable {
     private Client client;
     private Socket socket;
     private Server server;
+    private PrintWriter output;
 
     public ClientConnection(Socket socket, Server server) {
         this.socket = socket;
@@ -30,35 +30,38 @@ public class ClientConnection implements Observer, Runnable {
 
     @Override
     public void notifyObserver(String message) {
-
+        output.println(message);
+        output.flush();
     }
 
     @Override
     public void run() {
         try {
+            output = new PrintWriter(socket.getOutputStream());
             BufferedReader clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             authorise(clientInput);
+            listen(clientInput);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private boolean authorise(BufferedReader clientInput) throws IOException {
+    private void listen(BufferedReader clientInput) throws IOException {
         String input;
-        while (true) {
-            if (clientInput.ready()) {
-                input = clientInput.readLine();
-                String login = input.split(" ")[0];
-                String password = input.split(" ")[1];
-                client = new Client(login, password);
-                server.addObserver(this, login);
-                log.info("New connection " + "\"" + login + "\"" + " added");
-                return true;
-            }
+        while ((input = clientInput.readLine()) != null) {
+            server.notifyObservers(input, client.getLogin());
         }
     }
 
-    public String getClientName() {
-        return null;
+    private void authorise(BufferedReader clientInput) throws IOException {
+        String input;
+        while ((input = clientInput.readLine()) != null) {
+            String login = input.split(" ")[0];
+            String password = input.split(" ")[1];
+            client = new Client(login, password);
+            server.addObserver(this);
+            log.info("New connection " + "\"" + login + "\"" + " added");
+            return;
+        }
     }
 }

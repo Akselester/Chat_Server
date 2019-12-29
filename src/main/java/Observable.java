@@ -1,5 +1,7 @@
 public interface Observable {
-    void notifyObservers (String message);
-    void addObserver (Observer client, String clientName);
-    void removeObserver (String clientName);
+    void notifyObservers(String message, String whoTalks);
+
+    void addObserver(Observer client);
+
+    void removeObserver(Observer client);
 }

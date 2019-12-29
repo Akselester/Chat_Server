@@ -3,13 +3,12 @@ import lombok.extern.java.Log;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Log
 public class Server implements Observable {
     public final static int PORT = 8080;
-    private volatile static Map<String, Observer> clients = new HashMap<>();
+    private volatile static List<Observer> clients = new ArrayList<>();
 
     public void start() {
         log.info("========== SERVER STARTS SUCCESSFULLY ==========");
@@ -27,17 +26,20 @@ public class Server implements Observable {
     }
 
     @Override
-    public void notifyObservers(String message) {
-
+    public void notifyObservers(String message, String whoTalks) {
+        for (Observer client :
+                clients) {
+            client.notifyObserver(whoTalks + " >> " + message);
+        }
     }
 
     @Override
-    public void addObserver(Observer connection, String clientName) {
-        clients.put(clientName, connection);
+    public void addObserver(Observer connection) {
+        clients.add(connection);
     }
 
     @Override
-    public void removeObserver(String clientName) {
-        clients.remove(clientName);
+    public void removeObserver(Observer connection) {
+        clients.remove(connection);
     }
 }

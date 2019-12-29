@@ -10,6 +10,7 @@ public class Server implements Observable {
     public final static int PORT = 8080;
     private volatile static List<Observer> clients = new ArrayList<>();
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public void start() {
         log.info("========== SERVER STARTS SUCCESSFULLY ==========");
 

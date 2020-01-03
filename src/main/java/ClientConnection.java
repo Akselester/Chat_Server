@@ -26,7 +26,7 @@ public class ClientConnection implements Observer, Runnable {
 
     @Override
     public void stopClient() {
-
+        server.removeObserver(this);
     }
 
     @Override
@@ -43,6 +43,7 @@ public class ClientConnection implements Observer, Runnable {
             authorise(clientInput);
             listen(clientInput);
         } catch (IOException e) {
+            stopClient();
             e.printStackTrace();
         }
     }
@@ -54,6 +55,7 @@ public class ClientConnection implements Observer, Runnable {
         }
     }
 
+    @SuppressWarnings("LoopStatementThatDoesntLoop")
     private void authorise(BufferedReader clientInput) throws IOException {
         String input;
         while ((input = clientInput.readLine()) != null) {

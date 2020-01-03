@@ -41,6 +41,8 @@ public class Server implements Observable {
 
     @Override
     public void removeObserver(Observer connection) {
-        clients.remove(connection);
+        if (clients.remove(connection)) {
+            log.info("Client removed");
+        }
     }
 }

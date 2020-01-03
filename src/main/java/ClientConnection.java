@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Objects;
 
 @Log
 public class ClientConnection implements Observer, Runnable {
@@ -63,5 +64,18 @@ public class ClientConnection implements Observer, Runnable {
             log.info("New connection " + "\"" + login + "\"" + " added");
             return;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClientConnection)) return false;
+        ClientConnection that = (ClientConnection) o;
+        return client.getLogin().equals(that.client.getLogin());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(client.getLogin());
     }
 }

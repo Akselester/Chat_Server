@@ -48,6 +48,19 @@ public class Server implements Observable {
                 clients) {
             client.notifyObserver(whoTalks + " >> " + message);
         }
+
+        putToDB(message, whoTalks);
+    }
+
+    private void putToDB (String message, String whoTalks) {
+        String query = "insert into messages (user, message) values('" + whoTalks + "', '" + message + "')";
+        try {
+            database.createStatement().executeUpdate(query);
+        } catch (SQLException e) {
+            log.info("sql query does not executed");
+            log.info("query = " + query);
+            e.printStackTrace();
+        }
     }
 
     @Override

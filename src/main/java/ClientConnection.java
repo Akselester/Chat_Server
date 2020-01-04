@@ -44,7 +44,13 @@ public class ClientConnection implements Observer, Runnable {
             listen(clientInput);
         } catch (IOException e) {
             stopClient();
-            e.printStackTrace();
+        } finally {
+            try {
+                output.close();
+                socket.close();
+            } catch (Exception e) {
+                log.info("Resources closing errors");
+            }
         }
     }
 

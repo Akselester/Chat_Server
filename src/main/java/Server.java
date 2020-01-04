@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -52,7 +53,7 @@ public class Server implements Observable {
         putToDB(message, whoTalks);
     }
 
-    private void putToDB (String message, String whoTalks) {
+    private void putToDB(String message, String whoTalks) {
         String query = "insert into messages (user, message) values('" + whoTalks + "', '" + message + "')";
         try {
             database.createStatement().executeUpdate(query);
@@ -61,6 +62,11 @@ public class Server implements Observable {
             log.info("query = " + query);
             e.printStackTrace();
         }
+    }
+
+    public ResultSet getMessages() throws SQLException {
+        String query = "select user, message from messages";
+        return database.createStatement().executeQuery(query);
     }
 
     @Override

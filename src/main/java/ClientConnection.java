@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 
 @Log
@@ -41,6 +43,7 @@ public class ClientConnection implements Observer, Runnable {
             output = new PrintWriter(socket.getOutputStream());
             BufferedReader clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             authorise(clientInput);
+            sendHistory();
             listen(clientInput);
         } catch (IOException e) {
             stopClient();
@@ -71,6 +74,18 @@ public class ClientConnection implements Observer, Runnable {
             server.addObserver(this);
             log.info("New connection " + "\"" + login + "\"" + " added");
             return;
+        }
+    }
+
+    private void sendHistory() {
+        try {
+            ResultSet messages = server.getMessages();
+            while (messages.next()) {
+                String message = messages.getString("user") + " >> " + messages.getString("message");
+                notifyObserver(message);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
